@@ -2,21 +2,17 @@
 
 const $HTML = document.documentElement;
 const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-const darkModeQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
 if (sessionStorage.getItem("theme")) {
   $HTML.dataset.theme = sessionStorage.getItem("theme");
+} else {
+  $HTML.dataset.theme = isDark? "dark" : "light";
 }
-
-darkModeQuery.addEventListener("change", (e) => {
-  const isDark = e.matches;
-  $HTML.dataset.theme = isDark ? "dark" : "light";
-  sessionStorage.setItem("theme", $HTML.dataset.theme);
-});
 
 let isPressing = false;
 const changeTheme = function () {
-  isPressing = isPressing ? false : true;
+  // isPressing = isPressing ? false : true;
+  isPressing = !isPressing;
   this.setAttribute("aria-pressed", isPressing);
   $HTML.setAttribute(
     "data-theme",
