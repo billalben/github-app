@@ -635,9 +635,16 @@ body {
     transform: translateX(200%);
   }
 }
-.repo-skeleton, .follower-skeleton {background-color: var(--alpha-5);}
-.repo-skeleton .text-1 {margin-block: 12px;}
-.repo-skeleton .text-2 {width: 70%;}
+.repo-skeleton,
+.follower-skeleton {
+  background-color: var(--alpha-5);
+}
+.repo-skeleton .text-1 {
+  margin-block: 12px;
+}
+.repo-skeleton .text-2 {
+  width: 70%;
+}
 .repo-skeleton .card-footer {
   display: flex;
   gap: var(--spacing);
