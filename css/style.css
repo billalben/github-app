@@ -304,6 +304,17 @@ body {
 .label-2 {
   font-size: var(--label-2);
 }
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
 
 /* ======== Components ======== */
 /* +++ Icon Button +++ */
@@ -413,6 +424,156 @@ body {
   border-color: var(--surface-1-outline-hover);
 }
 
+/* +++ Badge +++ */
+.badge {
+  background-color: var(--surface-variant);
+  color: var(--alpha-60);
+  max-width: max-content;
+  font-size: var(--label-2);
+  font-weight: var(--weight-semiBold);
+  text-transform: uppercase;
+  height: 24px;
+  line-height: 24px;
+  padding-inline: 12px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--surface-variant-outline);
+}
+.repo-card .badge {
+  position: absolute;
+  top: var(--spacing);
+  right: var(--spacing);
+}
+.repo-card .card-footer {
+  background-color: var(--surface-variant);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing);
+}
+.repo-card .meta-item {
+  color: var(--on-surface);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* +++ Tab Navigation +++ */
+.tab-list {
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+  border-block-end: 1px solid var(--alpha-5);
+}
+.tab-list::-webkit-scrollbar {
+  display: none;
+}
+.tab-btn {
+  position: relative;
+  height: 48px;
+  padding-inline: 20px;
+  font-size: var(--label-1);
+  margin-block-end: 4px;
+  border-radius: var(--radius-8);
+  opacity: 0.8;
+  flex: 1 0 25%;
+  transition: var(--transition-short);
+  -webkit-transition: var(--transition-short);
+  -moz-transition: var(--transition-short);
+  -ms-transition: var(--transition-short);
+  -o-transition: var(--transition-short);
+  -webkit-border-radius: var(--radius-8);
+  -moz-border-radius: var(--radius-8);
+  -ms-border-radius: var(--radius-8);
+  -o-border-radius: var(--radius-8);
+}
+.tab-btn:where(:hover, :focus-visible):not(:active) {
+  background-color: var(--alpha-5);
+  opacity: 1;
+}
+.tab-btn[aria-selected="true"] {
+  font-weight: var(--weight-medium);
+  opacity: 1;
+}
+.tab-btn[aria-selected="true"]::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background-color: var(--primary);
+  border-radius: var(--radius-pill);
+}
+
+/* +++ Card +++ */
+.card {
+  --spacing: 16px;
+  background-color: var(--surface);
+  overflow: hidden;
+  border-radius: var(--radius-12);
+  -webkit-border-radius: var(--radius-12);
+  -moz-border-radius: var(--radius-12);
+  -ms-border-radius: var(--radius-12);
+  -o-border-radius: var(--radius-12);
+}
+.card :where(.card-body, .card-footer) {
+  padding: var(--spacing);
+}
+
+/* +++ Follower Card +++ */
+.follower-card {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing);
+  padding: var(--spacing);
+}
+.follower-card .avatar-circle {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+}
+.follower-card .icon-btn {
+  margin-inline-start: auto;
+}
+.follower-card .card-title {
+  font-size: var(--body);
+  font-weight: var(--weight-regular);
+}
+
+/* +++ Repository Card +++ */
+.repo-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.repo-card .card-body {
+  flex-grow: 1;
+}
+.repo-card .card-title {
+  max-width: max-content;
+  padding-inline-end: 76px;
+  transition: var(--transition-short);
+  -webkit-transition: var(--transition-short);
+  -moz-transition: var(--transition-short);
+  -ms-transition: var(--transition-short);
+  -o-transition: var(--transition-short);
+}
+.repo-card .card-title:where(:hover, :focus-visible) {
+  color: var(--primary);
+}
+.repo-card .card-text {
+  color: var(--on-surface-variant);
+
+  /* Old Syntax || it is deprecated */
+  /* display: -webkit-box;
+  -webkit-box-orient: vertical; */
+
+  display: flex;
+  flex-direction: column;
+  overflow-y: hidden;
+  -webkit-line-clamp: 2;
+  margin-block-start: 8px;
+}
+
 /* +++ Skeleton +++ */
 .avatar-skeleton {
   width: 160px;
@@ -473,6 +634,29 @@ body {
   100% {
     transform: translateX(200%);
   }
+}
+.repo-skeleton, .follower-skeleton {background-color: var(--alpha-5);}
+.repo-skeleton .text-1 {margin-block: 12px;}
+.repo-skeleton .text-2 {width: 70%;}
+.repo-skeleton .card-footer {
+  display: flex;
+  gap: var(--spacing);
+  border-block-start: 1px solid var(--alpha-5);
+}
+.repo-skeleton .card-footer .text-skeleton {
+  max-width: 56px;
+  flex-grow: 1;
+}
+.follower-skeleton {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing);
+  gap: var(--spacing);
+}
+.follower-skeleton .avatar-skeleton {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
 }
 
 /* ======== Skip To Content ======== */
@@ -607,4 +791,71 @@ header .container {
 }
 .profile .footer {
   display: none;
+}
+
+/* ======== Tab ======== */
+.tab-container .tab-list {
+  margin-inline: -16px;
+  padding-inline: 16px;
+}
+.tab-panel {
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding-block-start: 16px;
+}
+.tab-panel[hidden] {
+  display: none;
+}
+.tab-panel .card {
+  flex-grow: 1;
+  width: 100%;
+}
+.tab-panel .error-content {
+  width: 100%;
+  margin-block: 96px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.tab-panel .error-content .title-1 {
+  color: var(--alpha-50);
+}
+.tab-panel .error-content .text {
+  color: var(--alpha-80);
+}
+
+/* ======== Error ======== */
+.error {
+  position: fixed;
+  top: var(--header-height);
+  left: 0;
+  width: 100%;
+  height: calc(100vh - var(--header-height));
+  height: calc(100svh - var(--header-height));
+  background-color: var(--background);
+  display: grid;
+  place-content: center;
+  gap: 8px;
+  text-align: center;
+  z-index: 2;
+  display: none;
+}
+.error .title-1 {
+  color: var(--alpha-50);
+}
+.error .text {
+  color: var(--alpha-80);
+}
+
+/* ======== Footer ======== */
+.footer {
+  padding-block-start: 16px;
+  border-block-start: 1px solid var(--outline);
+  margin-block-start: 16px;
+}
+.copyright {
+  color: var(--on-surface-2);
 }
