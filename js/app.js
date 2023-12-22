@@ -1,5 +1,7 @@
 "use strict";
 
+import fetchData from "./api.js";
+
 // Add eventListener on multiple elements
 const addEventsOnElements = function ($elements, eventType, callback) {
   for (const $item of $elements) {
