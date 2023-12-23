@@ -123,31 +123,33 @@ window.updateProfile = function (profileUrl) {
     </div>
   `.repeat(6);
 
-  fetchData(profileUrl, (data) => {
-    const {
-      type,
-      avatar_url,
-      name,
-      login: username,
-      html_url: githubPage,
-      bio,
-      location,
-      company,
-      blog: website,
-      twitter_username,
-      public_repos,
-      followers,
-      following,
-      followers_url,
-      following_url,
-      repos_url,
-    } = data;
+  fetchData(
+    profileUrl,
+    (data) => {
+      const {
+        type,
+        avatar_url,
+        name,
+        login: username,
+        html_url: githubPage,
+        bio,
+        location,
+        company,
+        blog: website,
+        twitter_username,
+        public_repos,
+        followers,
+        following,
+        followers_url,
+        following_url,
+        repos_url,
+      } = data;
 
-    repoUrl = repos_url;
-    followersUrl = followers_url;
-    followingUrl = following_url.replace("{/other_user}", "");
+      repoUrl = repos_url;
+      followersUrl = followers_url;
+      followingUrl = following_url.replace("{/other_user}", "");
 
-    $profileCard.innerHTML = `
+      $profileCard.innerHTML = `
       <figure
         class="${type === "User" ? "avatar-circle" : "avatar-rounded"}
         img-holder"
@@ -172,9 +174,9 @@ window.updateProfile = function (profileUrl) {
         <span class="span">See on Github</span>
       </a>
       <ul class="profile-meta">
-        ${location
-            ?
-          `<li class="meta-item">
+        ${
+          location
+            ? `<li class="meta-item">
             <span class="material-symbols-rounded" aria-hidden="true">
             location_on
             </span>
@@ -183,9 +185,9 @@ window.updateProfile = function (profileUrl) {
             : ""
         }
         
-        ${company
-            ?
-          `<li class="meta-item">
+        ${
+          company
+            ? `<li class="meta-item">
             <span class="material-symbols-rounded" aria-hidden="true">
               apartment
             </span>
@@ -194,21 +196,24 @@ window.updateProfile = function (profileUrl) {
             : ""
         }
 
-        ${website
-            ?
-          `<li class="meta-item">
+        ${
+          website
+            ? `<li class="meta-item">
             <span class="material-symbols-rounded" aria-hidden="true">
               captive_portal
             </span>
-            <a href="${website}" target="_blank" class="meta-text">${website.replace("https://", "")}
+            <a href="${website}" target="_blank" class="meta-text">${website.replace(
+                "https://",
+                ""
+              )}
             </a>
           </li>`
             : ""
         }
 
-        ${twitter_username
-            ?
-          `<li class="meta-item">
+        ${
+          twitter_username
+            ? `<li class="meta-item">
             <span class="icon">
               <svg
                 width="24"
@@ -230,23 +235,98 @@ window.updateProfile = function (profileUrl) {
       </ul>
       <ul class="profile-stats">
         <li class="stats-item"><span class="body">${public_repos}</span> Repos</li>
-        <li class="stats-item"><span class="body">${numberToKilo(followers)}</span> Followers</li>
-        <li class="stats-item"><span class="body">${numberToKilo(following)}</span> Following</li>
+        <li class="stats-item"><span class="body">${numberToKilo(
+          followers
+        )}</span> Followers</li>
+        <li class="stats-item"><span class="body">${numberToKilo(
+          following
+        )}</span> Following</li>
       </ul>
 
       <div class="footer">
         <p class="copyright">&copy; 2023 billal ben</p>
       </div>
     `;
-  }, () => {
-    $error.style.display = "grid";
-    document.body.style.overflowY = "hidden";
 
-    $error.innerHTML = `
+      updateRepository();
+    },
+    () => {
+      $error.style.display = "grid";
+      document.body.style.overflowY = "hidden";
+
+      $error.innerHTML = `
       <p class="title-1">Oops! :(</p>
       <p class="text">There is no account with this username yet.</p>
-    `
-  });
+    `;
+    }
+  );
 };
 
 updateProfile(apiUrl);
+
+//Repository
+let forkedRepos = [];
+const updateRepository = function () {
+  fetchData(`${repoUrl}?sort=created&per_page=12`, function (data) {
+    $repoPanel.innerHTML = `<h2 class="sr-only">Repositories</h2>`;
+    forkedRepos = data.filter((item) => item.fork);
+
+    const repositories = data.filter((i) => !i.fork);
+
+    if (repositories.length) {
+      for (const repo of repositories) {
+        const {
+          name,
+          html_url,
+          description,
+          private: isPrivate,
+          language,
+          stargazers_count: stars_count,
+          forks_count,
+        } = repo;
+
+        const $repoCard = document.createElement("article");
+        $repoCard.classList.add("card", "repo-card");
+
+        $repoCard.innerHTML = `
+          <div class="card-body">
+            <a href="${html_url}" target="_blank" class="card-title">
+              <h3 class="title-3">${name}</h3>
+            </a>
+
+            ${description ? `<p class="card-text">${description}</p>` : ""}
+
+            <span class="badge">${isPrivate ? "Private" : "Public"}</span>
+
+          </div>
+          <div class="card-footer">
+            ${
+              language
+                ? `<div class="meta-item">
+                <span class="material-symbols-rounded" aria-hidden="true">code_blocks</span>
+                <span class="span">${language}</span>
+              </div>`
+                : ""
+            }
+
+            <div class="meta-item">
+              <span class="material-symbols-rounded" aria-hidden="true">star_rate</span>
+              <span class="span">${numberToKilo(stars_count)}</span>
+            </div>
+            <div class="meta-item">
+              <span class="material-symbols-rounded" aria-hidden="true">family_history</span>
+              <span class="span">${numberToKilo(forks_count)}</span>
+            </div>
+          </div>
+        `;
+
+        $repoPanel.appendChild($repoCard);
+      }
+    } else {
+      $repoPanel.innerHTML = `<div class="error-content">
+          <p class="title-1">Oops! :(</p>
+          <p class="text">Doesn't have any public repositories yet.</p>
+        </div>`;
+    }
+  });
+};
