@@ -54,6 +54,10 @@ Users can switch between dark and light themes, allowing for a more personalized
 
 Each panel (Repositories, Forked, Followers, Following) is designed to provide a comprehensive view and control over the user's GitHub data, making it easy to manage and interact with different aspects of their GitHub profile.
 
+### Acknowledgments
+
+Special thanks to [codewithsadee](https://github.com/codewithsadee), his expertise in writing clean code, creating well-structured HTML, efficient CSS styling, and clean JavaScript code, whose tutorials and guidance have been instrumental in the development of the GitHub App project.
+
 ## Contributing
 
 Your contributions are welcome and greatly appreciated. Follow these steps to contribute:
