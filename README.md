@@ -4,7 +4,7 @@
 
 Github App is a fully responsive website, <br />Responsive for all devices, build using HTML, CSS, and JavaScript.
 
-<a href="https://billalben.github.io/GitHub-App/"><strong>➥ Live Demo</strong></a>
+<a href="https://billalben.github.io/Github-App//"><strong>➥ Live Demo</strong></a>
 
 <!-- ### Demo Screenshots
 ![Github App Demo]() -->
