@@ -1,7 +1,7 @@
 "use strict";
 
 import { fetchData } from "./api.js";
-import { numberToKilo } from "./module.js";
+import { numberToKilo, currentYear } from "./module.js";
 
 // Add eventListener on multiple elements
 const addEventsOnElements = function ($elements, eventType, callback) {
@@ -244,7 +244,7 @@ window.updateProfile = function (profileUrl) {
       </ul>
 
       <div class="footer">
-        <p class="copyright">&copy; 2023 billal ben</p>
+        <p class="copyright">&copy; <span>${currentYear}</span> billal ben</p>
       </div>
     `;
 
@@ -504,3 +504,6 @@ const updateFollowing = function () {
 };
 
 $followingTabBtn.addEventListener("click", updateFollowing);
+
+// dynamic year copyright
+document.querySelector("footer .current-yr-cp").textContent = currentYear;
