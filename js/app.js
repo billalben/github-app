@@ -1,9 +1,26 @@
 "use strict";
 
-import { fetchData } from "./api.js";
+import fetchData from "./api.js";
 import { numberToKilo, currentYear } from "./module.js";
 
-// Add eventListener on multiple elements
+/**
+ * Attaches an event listener to a list of elements.
+ *
+ * This function iterates over an array of elements and attaches the specified event listener to each element.
+ *
+ * @function
+ * @param {HTMLElement[]} $elements - An array of HTML elements to which the event listener will be attached.
+ * @param {string} eventType - A string representing the type of event to listen for (e.g., 'click', 'mouseover').
+ * @param {Function} callback - A function to be executed when the event is triggered on any of the elements.
+ *
+ * @example
+ * // Example usage: Adding a 'click' event listener to multiple buttons
+ * const buttons = document.querySelectorAll('.my-button');
+ * addEventsOnElements(buttons, 'click', function(event) {
+ *   console.log('Button clicked:', event.target);
+ * });
+ */
+
 const addEventsOnElements = function ($elements, eventType, callback) {
   for (const $item of $elements) {
     $item.addEventListener(eventType, callback);
@@ -21,6 +38,7 @@ window.addEventListener("scroll", function () {
 // Search Toggle
 const $searchToggler = document.querySelector("[data-search-toggler]");
 const $searchField = document.querySelector("[data-search-field]");
+$searchField.value = "";
 
 let isExpanded = false;
 
@@ -71,13 +89,18 @@ addEventsOnElements($tabBtns, "keydown", function (event) {
 // Search
 const $searchSubmit = document.querySelector("[data-search-submit]");
 let apiUrl = "https://api.github.com/users/billalben";
-let repoUrl,
-  followersUrl,
-  followingUrl = "";
+let repoUrl;
+let followersUrl;
+let followingUrl = "";
+let totalRepos = 0;
+const repos_per_page = 12;
+let repos_current_page = 1;
+let isDoneRepos = false;
 
-const searchUser = function () {
-  if (!$searchField.value) return;
-  apiUrl = `https://api.github.com/users/${$searchField.value.trim()}`;
+const searchUser = () => {
+  const searchFieldValue = $searchField.value.trim();
+  if (!searchFieldValue) return;
+  apiUrl = `https://api.github.com/users/${searchFieldValue}`;
   updateProfile(apiUrl);
 };
 
@@ -144,6 +167,8 @@ window.updateProfile = function (profileUrl) {
         following_url,
         repos_url,
       } = data;
+
+      totalRepos = public_repos;
 
       repoUrl = repos_url;
       followersUrl = followers_url;
@@ -250,13 +275,14 @@ window.updateProfile = function (profileUrl) {
 
       updateRepository();
     },
-    () => {
+    (error) => {
       $error.style.display = "grid";
       document.body.style.overflowY = "hidden";
 
       $error.innerHTML = `
       <p class="title-1">Oops! :(</p>
       <p class="text">There is no account with this username yet.</p>
+      <p class="text">${error}</p>
     `;
     }
   );
@@ -264,31 +290,50 @@ window.updateProfile = function (profileUrl) {
 
 updateProfile(apiUrl);
 
+/**
+ * Create a button element with the specified text, class name, and click event handler.
+ * @param {string} text - The text content of the button.
+ * @param {Function} onClick - The click event handler function.
+ * @returns {HTMLButtonElement} - The button element.
+ */
+
+const generateReposButton = (text, onClick) => {
+  const $btn = document.createElement("button");
+  $btn.classList.add("btn", "btn-secondary", "next-prev-btn");
+  $btn.textContent = text;
+  $btn.addEventListener("click", onClick);
+  return $btn;
+};
+
 // Repository
 let forkedRepos = [];
 const updateRepository = function () {
-  fetchData(`${repoUrl}?sort=created&per_page=12`, function (data) {
-    $repoPanel.innerHTML = `<h2 class="sr-only">Repositories</h2>`;
-    forkedRepos = data.filter((item) => item.fork);
+  fetchData(
+    `${repoUrl}?sort=created&per_page=${repos_per_page}&page=${repos_current_page}`,
+    function (data) {
+      $repoPanel.innerHTML = `<h2 class="sr-only">Repositories</h2>`;
 
-    const repositories = data.filter((i) => !i.fork);
+      const forkedReposPage = data.filter((item) => item.fork);
+      if (!isDoneRepos) forkedRepos = [...forkedRepos, ...forkedReposPage];
 
-    if (repositories.length) {
-      for (const repo of repositories) {
-        const {
-          name,
-          html_url,
-          description,
-          private: isPrivate,
-          language,
-          stargazers_count: stars_count,
-          forks_count,
-        } = repo;
+      const repositories = data.filter((i) => !i.fork);
 
-        const $repoCard = document.createElement("article");
-        $repoCard.classList.add("card", "repo-card");
+      if (repositories.length) {
+        for (const repo of repositories) {
+          const {
+            name,
+            html_url,
+            description,
+            private: isPrivate,
+            language,
+            stargazers_count: stars_count,
+            forks_count,
+          } = repo;
 
-        $repoCard.innerHTML = `
+          const $repoCard = document.createElement("article");
+          $repoCard.classList.add("card", "repo-card");
+
+          $repoCard.innerHTML = `
           <div class="card-body">
             <a href="${html_url}" target="_blank" class="card-title">
               <h3 class="title-3">${name}</h3>
@@ -320,15 +365,38 @@ const updateRepository = function () {
           </div>
         `;
 
-        $repoPanel.appendChild($repoCard);
-      }
-    } else {
-      $repoPanel.innerHTML = `<div class="error-content">
+          $repoPanel.appendChild($repoCard);
+        }
+
+        const buttonWrapper = document.createElement("div");
+        buttonWrapper.classList.add("btn-wrapper");
+        $repoPanel.appendChild(buttonWrapper);
+
+        const $previousBtn = generateReposButton("Previous", () => {
+          repos_current_page--;
+          updateRepository();
+          document.body.scrollIntoView({ behavior: "smooth", top: 0 });
+        });
+        $previousBtn.disabled = repos_current_page === 1;
+
+        const $nextBtn = generateReposButton("Next", () => {
+          repos_current_page++;
+          updateRepository();
+          document.body.scrollIntoView({ behavior: "smooth", top: 0 });
+        });
+        $nextBtn.disabled = repos_current_page * repos_per_page >= totalRepos;
+        if ($nextBtn.disabled) isDoneRepos = true;
+
+        buttonWrapper.appendChild($previousBtn);
+        buttonWrapper.appendChild($nextBtn);
+      } else {
+        $repoPanel.innerHTML = `<div class="error-content">
           <p class="title-1">Oops! :(</p>
           <p class="text">Doesn't have any public repositories yet.</p>
         </div>`;
+      }
     }
-  });
+  );
 };
 
 // Forked Repository
