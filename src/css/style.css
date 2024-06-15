@@ -352,6 +352,9 @@ body {
   margin-inline: auto;
   margin-block: 16px;
 }
+.btn-wrapper > * {
+  min-width: 110px;
+}
 .next-prev-btn[disabled] {
   opacity: 0.5;
   cursor: not-allowed;

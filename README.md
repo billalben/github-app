@@ -4,10 +4,9 @@
 
 Github App is a fully responsive website, <br />Responsive for all devices, build using HTML, CSS, and JavaScript.
 
-<a href="https://billalben.github.io/github-app//"><strong>➥ Live Demo</strong></a>
+<a href="https://billalben.github.io/github-app/"><strong>➥ Live Demo on Github Pages</strong></a>
 
-<!-- ### Demo Screenshots
-![Github App Demo]() -->
+<a href="https://github-gitfinder.netlify.app/"><strong>➥ Live Demo on Netlify</strong></a>
 
 **Github App** is an intuitive and responsive web application that enhances the GitHub user experience. This application provides an elegant interface for managing and interacting with various aspects of GitHub, such as repositories, forks, followers and following. Developed with a mobile-first design philosophy, it ensures a seamless experience across a wide range of devices.
 
