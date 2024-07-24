@@ -348,9 +348,10 @@ body {
 
 .btn-wrapper {
   display: flex;
+  justify-content: center;
   gap: 8px;
-  margin-inline: auto;
   margin-block: 16px;
+  width: 100%;
 }
 .btn-wrapper > * {
   min-width: 110px;
@@ -592,6 +593,7 @@ body {
   display: flex;
   flex-direction: column;
   overflow-y: hidden;
+  line-clamp: 2;
   -webkit-line-clamp: 2;
   margin-block-start: 8px;
 }
